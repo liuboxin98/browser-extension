@@ -3,8 +3,8 @@ import ext from "./utils/ext";
 
 console.log('in content');
 
-document.getElementsByClassName('logo')[0].innerText = 'testttttttttttttttttt'
-
+if (window.location.origin.includes('localhost'))
+  document.getElementsByClassName('logo')[0].innerText = 'testttttttttttttttttt'
 
 
 var extractTags = () => {
@@ -29,14 +29,21 @@ var extractTags = () => {
     data.description = descriptionTag.getAttribute("content")
   }
 
+  console.log(data);
   return data;
 }
 
-
-
 ext.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log(request.action);
+
   if (request.action === 'process-page') {
     sendResponse(extractTags())
   }
+
 });
+
+// ext.runtime.sendMessage({
+//   action: "fromContent"
+// }, function (response) {
+//   console.clear()
+//   console.log('background.js said : ' + response);
+// });

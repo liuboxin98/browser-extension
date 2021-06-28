@@ -30,15 +30,15 @@ optionsLink.addEventListener("click", function (e) {
   });
 
   chrome.runtime.sendMessage({
-      action: "perform-save",
+      action: "fromPopup",
       data: "nothing",
     },
     function (response) {
       if (response && response.action === "saved") {
         console.log(response.data);
-        renderMessage("Your bookmark was saved successfully!");
+        renderMessage("Your message send success!");
       } else {
-        renderMessage("Sorry, there was an error while saving your bookmark.");
+        renderMessage("Sorry, message send fail.");
       }
     }
   );
@@ -58,3 +58,13 @@ optionsLink.addEventListener("click", function (e) {
     );
   });
 });
+
+
+
+chrome.history.search({
+  'text': '', // Return every history item....
+  'startTime': (new Date).getTime() - 1000 * 60 * 60 * 24 * 7 // that was accessed less than one week ago.
+}, function (res) {
+  console.log(res);
+
+})
