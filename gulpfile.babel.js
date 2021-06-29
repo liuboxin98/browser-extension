@@ -1,6 +1,6 @@
 import fs from 'fs';
 import gulp from 'gulp';
-import {merge} from 'event-stream'
+import { merge } from 'event-stream'
 import browserify from 'browserify';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
@@ -47,13 +47,8 @@ gulp.task('js', async () => {
 })
 
 gulp.task('styles', () => {
-  return gulp.src('src/styles/**/*.scss')
+  return gulp.src('src/styles/*.css')
     .pipe($.plumber())
-    .pipe($.sass.sync({
-      outputStyle: 'expanded',
-      precision: 10,
-      includePaths: ['.']
-    }).on('error', $.sass.logError))
     .pipe(gulp.dest(`build/${target}/styles`));
 });
 
@@ -94,8 +89,8 @@ gulp.task('build', async (cb) => {
   runSequence('clean', 'styles', 'ext', cb)
 });
 
-gulp.task('watch', gulp.series('build', async function() {
-   // Do something after build finished.
+gulp.task('watch', gulp.series('build', async function () {
+  // Do something after build finished.
   $.livereload.listen();
   gulp.watch(['./src/**/*']).on("change", () => {
     runSequence('build', $.livereload.reload);
@@ -104,7 +99,7 @@ gulp.task('watch', gulp.series('build', async function() {
 
 gulp.task('default', gulp.series('build'));
 
-gulp.task('ext', gulp.series('manifest','js', async function() {
+gulp.task('ext', gulp.series('manifest', 'js', async function () {
   return mergeAll(target)
 }));
 
@@ -113,7 +108,7 @@ function pipe(src, ...transforms) {
   return transforms.reduce((stream, transform) => {
     const isDest = typeof transform === 'string'
     return stream.pipe(isDest ? gulp.dest(transform) : transform)
-  }, gulp.src(src,{ allowEmpty: true}))
+  }, gulp.src(src, { allowEmpty: true }))
 }
 
 function mergeAll(dest) {
@@ -135,28 +130,28 @@ function buildJS(target) {
     'livereload.js'
   ]
 
-  let tasks = files.map( file => {
+  let tasks = files.map(file => {
     return browserify({
       entries: 'src/scripts/' + file,
       debug: true
     })
-    .transform('babelify', { presets: ['@babel/preset-env'] })
-    .transform(preprocessify, {
-      includeExtensions: ['.js'],
-      context: context
-    })
-    .bundle()
-    .pipe(source(file))
-    .pipe(buffer())
-    .pipe(gulpif(!production, $.sourcemaps.init({ loadMaps: true }) ))
-    .pipe(gulpif(!production, $.sourcemaps.write('./') ))
-    .pipe(gulpif(production, $.uglify({
-      "mangle": false,
-      "output": {
-        "ascii_only": true
-      }
-    })))
-    .pipe(gulp.dest(`build/${target}/scripts`));
+      .transform('babelify', { presets: ['@babel/preset-env'] })
+      .transform(preprocessify, {
+        includeExtensions: ['.js'],
+        context: context
+      })
+      .bundle()
+      .pipe(source(file))
+      .pipe(buffer())
+      .pipe(gulpif(!production, $.sourcemaps.init({ loadMaps: true })))
+      .pipe(gulpif(!production, $.sourcemaps.write('./')))
+      .pipe(gulpif(production, $.uglify({
+        "mangle": false,
+        "output": {
+          "ascii_only": true
+        }
+      })))
+      .pipe(gulp.dest(`build/${target}/scripts`));
   });
 
   return merge.apply(null, tasks);

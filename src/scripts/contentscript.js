@@ -1,51 +1,40 @@
-// import chrome from "./utils/chrome";
-
-
-console.log('in content');
-
-if (window.location.origin.includes('localhost')) {
-  // document.getElementsByClassName('logo')[0].innerText = 'testttttttttttttttttt'
-}
-
-var extractTags = () => {
-  var url = document.location.href;
-  if (!url || !url.match(/^http/)) return;
-
-  var data = {
-    title: "",
-    description: "",
-    url: document.location.href
-  }
-
-  var ogTitle = document.querySelector("meta[property='og:title']");
-  if (ogTitle) {
-    data.title = ogTitle.getAttribute("content")
-  } else {
-    data.title = document.title
-  }
-
-  var descriptionTag = document.querySelector("meta[property='og:description']") || document.querySelector("meta[name='description']")
-  if (descriptionTag) {
-    data.description = descriptionTag.getAttribute("content")
-  }
-
-  console.log(data);
-
-  localStorage.setItem('web', JSON.stringify(data));
-  return data;
-}
+// import ext from "./utils/ext";
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
-  if (request.action === 'process-page') {
-    sendResponse(extractTags())
+  if (request.action === 'blockDom') {
+    sendResponse(block(request.seletor, request.name))
   }
 
 });
 
-chrome.runtime.sendMessage({
-  action: "fromContent"
-}, function (response) {
-  console.clear()
-  console.log('background.js said : ' + response);
-});
+
+function block(seletor, name) {
+  if (seletor === 'class') {
+    document.querySelector(`.${name}`).style = 'display:none';
+    saveLocal(seletor, name)
+  } else {
+    document.getElementById(`${name}`).style = 'display:none';
+    saveLocal(seletor, name)
+  }
+  return true
+}
+
+function saveLocal(seletor, name) {
+  localStorage.setItem('block_dom', JSON.stringify({ seletor, name }));
+}
+
+function readLocal() {
+  if (JSON.parse(localStorage.getItem('block_dom'))) {
+    var { seletor, name } = JSON.parse(localStorage.getItem('block_dom'));
+    if (seletor && name) {
+      block(seletor, name)
+
+      // chrome.runtime.sendMessage({ action: 'savedBlock', seletor, name }, function (response) {
+      //   console.log(response);
+      // });
+    }
+  }
+}
+
+readLocal();

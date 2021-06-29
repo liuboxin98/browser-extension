@@ -1,31 +1,43 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <link href="styles/popup.css" rel="stylesheet" />
-  </head>
-  <body>
-    <div id="app" class="popup-content">
-      <h1 class="app-name">Extension Boilerplate</h1>
 
-      <div id="display-container"></div>
-      <div id="scroll" style="overflow: auto"></div>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="" />
+  <link href="styles/popup.css" rel="stylesheet" />
+</head>
 
-      <footer>
-        <p>
-          <small>
-            <a href="#" class="js-options">Send</a>
-          </small>
-        </p>
+<body>
+  <div id="app" class="popup-content">
+    <h3>Block Dom</h3>
 
-        <p>
-          <small>
-            <a href="#" id="search">Search</a>
-          </small>
-        </p>
-      </footer>
-    </div>
+    <form class="form-horizontal" role="form">
+      <div class="form-group">
+        <label for="optionsType" class="col-sm-2 control-label">标签选择器</label>
+        <div class="col-sm-10">
+          <label class="radio-inline">
+            <input type="radio" name="optionsType" value="class" checked /> class
+            <input type="radio" name="optionsType" value="id" /> id
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="tagName" class="col-sm-2 control-label">标签名</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="tagName" placeholder="输入标签名" value="">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="button" class="btn btn-default" id="btnSave"> Save </button>
+        </div>
+      </div>
+    </form>
 
-    <script src="scripts/popup.js"></script>
-  </body>
+    <div id="scroll"></div>
+  </div>
+
+  <script src="scripts/popup.js"></script>
+</body>
+
 </html>
