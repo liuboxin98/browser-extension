@@ -1,5 +1,6 @@
-import chrome from "./utils/ext";
+// import chrome from "./utils/ext";
 import storage from "./utils/storage";
+const search = document.querySelector('#search');
 
 // debugger
 
@@ -24,15 +25,15 @@ optionsLink.addEventListener("click", function (e) {
   e.preventDefault();
   // chrome.tabs.create({ 'url': chrome.chromeension.getURL('options.html') });
 
-  chrome.tabs.getSelected(null, function (tab) {
-    //获取当前tab
-    console.log(tab);
-  });
+  // chrome.tabs.getSelected(null, function (tab) {
+  //   //获取当前tab
+  //   console.log(tab);
+  // });
 
   chrome.runtime.sendMessage({
-      action: "fromPopup",
-      data: "nothing",
-    },
+    action: "fromPopup",
+    data: "nothing",
+  },
     function (response) {
       if (response && response.action === "saved") {
         console.log(response.data);
@@ -48,23 +49,29 @@ optionsLink.addEventListener("click", function (e) {
     currentWindow: true,
   }, function (tabs) {
     var activeTab = tabs[0];
-    chrome.tabs.sendMessage(
-      activeTab.id, {
-        action: "process-page",
-      },
-      function (response) {
-        console.log(response);
-      }
-    );
+    chrome.tabs.sendMessage(activeTab.id, { action: "process-page" }, function (response) {
+      console.log(response);
+    });
   });
+
 });
 
 
 
-chrome.history.search({
-  'text': '', // Return every history item....
-  'startTime': (new Date).getTime() - 1000 * 60 * 60 * 24 * 7 // that was accessed less than one week ago.
-}, function (res) {
-  console.log(res);
 
-})
+search.onclick = () => {
+  const query = {
+    text: ''
+  };
+  chrome.history.search(query, (res) => {
+    const arr = res.slice(0, 3).map((item) => {
+      return item
+    });
+    console.log(arr);
+    let htm = '';
+    arr.forEach((element, index) => {
+      htm += `<p>${index + 1}： <a target="_blank" href="${element.url}">${element.title ? element.title : element.url}</a></p>`;
+    });
+    document.querySelector('#scroll').innerHTML = htm;
+  })
+};

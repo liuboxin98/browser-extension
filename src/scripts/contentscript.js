@@ -1,11 +1,11 @@
-import ext from "./utils/ext";
+// import chrome from "./utils/chrome";
 
 
 console.log('in content');
 
-if (window.location.origin.includes('localhost'))
-  document.getElementsByClassName('logo')[0].innerText = 'testttttttttttttttttt'
-
+if (window.location.origin.includes('localhost')) {
+  // document.getElementsByClassName('logo')[0].innerText = 'testttttttttttttttttt'
+}
 
 var extractTags = () => {
   var url = document.location.href;
@@ -30,10 +30,12 @@ var extractTags = () => {
   }
 
   console.log(data);
+
+  localStorage.setItem('web', JSON.stringify(data));
   return data;
 }
 
-ext.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
   if (request.action === 'process-page') {
     sendResponse(extractTags())
@@ -41,9 +43,9 @@ ext.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 });
 
-// ext.runtime.sendMessage({
-//   action: "fromContent"
-// }, function (response) {
-//   console.clear()
-//   console.log('background.js said : ' + response);
-// });
+chrome.runtime.sendMessage({
+  action: "fromContent"
+}, function (response) {
+  console.clear()
+  console.log('background.js said : ' + response);
+});
