@@ -5,6 +5,29 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === 'blockDom') {
     sendResponse(block(request.seletor, request.name))
   }
+  if (request.action === 'getBlockStatus') {
+    getBlock()
+  }
+  if (request.action === 'delBlock') {
+    let json = JSON.parse(localStorage.getItem('block_dom'));
+
+    if (json) {
+      let { seletor, name } = json;
+
+      if (seletor === 'class') {
+        document.querySelector(`.${name}`).style = 'display:block';
+      }
+      else {
+        document.getElementById(`${name}`).style = 'display:block';
+      }
+
+      localStorage.removeItem('block_dom');
+
+      sendResponse(true);
+    } else {
+      sendResponse(false);
+    }
+  }
 
 });
 
@@ -12,29 +35,50 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 function block(seletor, name) {
   if (seletor === 'class') {
     document.querySelector(`.${name}`).style = 'display:none';
-    saveLocal(seletor, name)
   } else {
     document.getElementById(`${name}`).style = 'display:none';
-    saveLocal(seletor, name)
   }
-  return true
+  saveLocal(seletor, name)
+  return readLocal()
 }
 
 function saveLocal(seletor, name) {
-  localStorage.setItem('block_dom', JSON.stringify({ seletor, name }));
+
+  let local = JSON.parse(localStorage.getItem('block_dom'));
+
+  if (local) {
+    let item = local.find(item => item.seletor == seletor && item.name == name);
+    if (!item) {
+      local.push({ seletor, name });
+    }
+    localStorage.setItem('block_dom', JSON.stringify(local));
+  } else {
+    localStorage.setItem('block_dom', JSON.stringify([{ seletor, name }]));
+  }
+
 }
 
 function readLocal() {
   if (JSON.parse(localStorage.getItem('block_dom'))) {
-    var { seletor, name } = JSON.parse(localStorage.getItem('block_dom'));
-    if (seletor && name) {
-      block(seletor, name)
-
-      // chrome.runtime.sendMessage({ action: 'savedBlock', seletor, name }, function (response) {
-      //   console.log(response);
-      // });
-    }
+    return JSON.parse(localStorage.getItem('block_dom'));
   }
 }
 
-readLocal();
+function Init() {
+  let json = readLocal();
+  if (json) {
+    json.map(item => {
+      block(item.seletor, item.name)
+    })
+  }
+}
+
+
+function getBlock() {
+  let json = readLocal();
+  if (json) {
+    chrome.runtime.sendMessage({ action: 'getBlock', json });
+  }
+}
+
+Init();
