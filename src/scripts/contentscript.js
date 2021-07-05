@@ -9,21 +9,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     getBlock()
   }
   if (request.action === 'delBlock') {
-    let json = JSON.parse(localStorage.getItem('block_dom'));
 
-    if (json) {
-      let { seletor, name } = json;
-
-      if (seletor === 'class') {
-        document.querySelector(`.${name}`).style = 'display:block';
-      }
-      else {
-        document.getElementById(`${name}`).style = 'display:block';
-      }
-
-      localStorage.removeItem('block_dom');
-
-      sendResponse(true);
+    let data = delBlock(request.seletor, request.name);
+    if (data) {
+      sendResponse(data);
     } else {
       sendResponse(false);
     }
@@ -64,20 +53,43 @@ function readLocal() {
   }
 }
 
-function Init() {
-  let json = readLocal();
-  if (json) {
-    json.map(item => {
-      block(item.seletor, item.name)
-    })
-  }
-}
-
-
 function getBlock() {
   let json = readLocal();
   if (json) {
     chrome.runtime.sendMessage({ action: 'getBlock', json });
+  }
+}
+
+function delBlock(seletor, name) {
+  let json = readLocal()
+  if (json) {
+
+    if (seletor === 'class') {
+      document.querySelector(`.${name}`).style = 'display:block';
+    }
+    else {
+      document.getElementById(`${name}`).style = 'display:block';
+    }
+
+    let newdata = json.filter(item => item.seletor !== seletor || item.name !== name);
+
+    localStorage.setItem('block_dom', JSON.stringify(newdata));
+
+    return newdata;
+  } else {
+    return false
+  }
+}
+
+function Init() {
+  let json = readLocal();
+  if (json) {
+    setTimeout(() => {
+      json.map(item => {
+        block(item.seletor, item.name)
+      })
+    }, 1000);
+
   }
 }
 
