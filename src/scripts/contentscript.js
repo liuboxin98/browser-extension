@@ -22,11 +22,16 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 
 function block(seletor, name) {
-  if (seletor === 'class') {
-    document.querySelector(`.${name}`).style = 'display:none';
-  } else {
-    document.getElementById(`${name}`).style = 'display:none';
+  try {
+    if (seletor === 'class') {
+      document.querySelector(`.${name}`).style = 'display:none !important';
+    } else {
+      document.getElementById(`${name}`).style = 'display:none !important';
+    }
+  } catch (error) {
+    console.log(error);
   }
+
   saveLocal(seletor, name)
   return readLocal()
 }
