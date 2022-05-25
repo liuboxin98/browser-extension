@@ -8,6 +8,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === 'getBlockStatus') {
     getBlock()
   }
+  if (request.action === 'getFilterData') {
+    getUrlFilterData()
+  }
   if (request.action === 'delBlock') {
 
     let data = delBlock(request.seletor, request.name);
@@ -16,6 +19,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     } else {
       sendResponse(false);
     }
+  }
+  if (request.action === 'urlFilter') {
+    setUrlFilter(request.url)
+  }
+  if (request.action === 'filterStatus') {
+    localStorage.setItem('filterStatus', request.status)
+    filter_status = request.status;
   }
 
 });
@@ -68,7 +78,6 @@ function getBlock() {
 function delBlock(seletor, name) {
   let json = readLocal()
   if (json) {
-
     if (seletor === 'class') {
       document.querySelector(`.${name}`).style = 'display:block';
     }
@@ -99,3 +108,66 @@ function Init() {
 }
 
 Init();
+
+
+
+
+// ----------------
+
+function setUrlFilter(url) {
+  let local = JSON.parse(localStorage.getItem('url_filter'));
+  if (local) {
+    let item = local.find(item => item == url);
+    if (!item) {
+      local.push(url);
+      localStorage.setItem('url_filter', JSON.stringify(local));
+    }
+  } else {
+    localStorage.setItem('url_filter', JSON.stringify([url]));
+
+  }
+}
+
+function getUrlFilterData() {
+  let json = JSON.parse(localStorage.getItem('url_filter'));
+  if (json) {
+    chrome.runtime.sendMessage({ action: 'getUrlFilter', json });
+  }
+}
+
+function filterInit() {
+  var filter_status = false;
+
+  let status = JSON.parse(localStorage.getItem('filterStatus'));
+  if (status) {
+    filter_status = status
+  }
+
+  let urls = JSON.parse(localStorage.getItem('url_filter'))
+
+  let str = ''
+  if (urls) {
+    urls.map(url => {
+      str += ` -site:${url}`
+    })
+  }
+
+  const btnBaiduSearch = document.querySelector('#su');
+
+  try {
+    btnBaiduSearch.onclick = () => {
+      const inputBaiduSearch = document.querySelector('#kw');
+      if (filter_status) {
+
+        if (!inputBaiduSearch.value.includes(str)) {
+          inputBaiduSearch.value += str;
+        }
+      } else {
+        inputBaiduSearch.value = inputBaiduSearch.value.replace(str, '');
+      }
+    }
+  }
+  catch (error) { }
+}
+
+filterInit();

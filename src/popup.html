@@ -3,41 +3,74 @@
 
 <head>
   <meta charset="utf-8" />
-  <link rel="stylesheet" href="" />
+  <link href="styles/bootstrap.min.css" rel="stylesheet" />
   <link href="styles/popup.css" rel="stylesheet" />
 </head>
 
 <body>
   <div id="app" class="popup-content">
-    <h3>Block Dom</h3>
 
-    <table class="table table-striped">
-      <tbody>
-        <tr>
-          <td>标签选择器</td>
-          <td class="selector">
-            <label><input type="radio" name="optionsType" value="class" checked /> class </label>
-            <label><input type="radio" name="optionsType" value="id" /> id </label>
-          </td>
-        </tr>
-        <tr>
-          <td>标签名</td>
-          <td>
-            <input type="text" class="form-control" id="tagName" placeholder="输入标签名" value="">
-          </td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>
-            <button type="button" class="btn btn-default" id="btnSave"> Save </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="panel panel-default">
+      <div class="panel-heading float">
+        <h4 class="switch-block"><a>Block Dom</a></h4>
+        <h4 class="switch-filter"><a>Filter search</a></h4>
+      </div>
+      <div class="panel-body">
+        <div class="block-dom">
+          <table class="table table-striped table-bordered">
+            <tbody>
+              <tr>
+                <td>标签选择器</td>
+                <td class="selector">
+                  <label><input type="radio" name="optionsType" value="class" checked /> class </label>
+                  <label><input type="radio" name="optionsType" value="id" /> id </label>
+                </td>
+              </tr>
+              <tr>
+                <td click="test()">标签名</td>
+                <td>
+                  <input type="text" class="form-control" id="tagName" placeholder="输入标签名" value="">
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>
+                  <button type="button" class="btn btn-default" id="btnSave"> Save </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div id="scroll"></div>
+        </div>
+        <div class="filter">
+          <table class="table table-striped table-bordered">
+            <tbody>
+              <tr>
+                <td>开关</td>
+                <td>
+                  <input type="checkbox" id="switchFilter"> 状态
+                </td>
+              </tr>
+              <tr>
+                <td>屏蔽域名</td>
+                <td>
+                  <input type="text" class="form-control" id="urlFilter" placeholder="输入屏蔽域名" value="">
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>
+                  <button type="button" class="btn btn-default" id="btnSaveFilter"> Save </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
+          <div id="filterTabel"></div>
+        </div>
+      </div>
+    </div>
 
-
-    <div id="scroll"></div>
   </div>
 
   <script src="scripts/popup.js"></script>
