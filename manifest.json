@@ -9,16 +9,32 @@
   },
   "default_locale": "en",
   "background": {
-    "scripts": ["scripts/background.js"]
+    "scripts": [
+      "scripts/background.js"
+    ]
   },
-  "permissions": ["tabs", "storage", "http://*/*", "https://*/*", "history"],
+  "permissions": [
+    "tabs",
+    "storage",
+    "http://*/*",
+    "https://*/*",
+    "history",
+    "webRequest",
+    "webRequestBlocking"
+  ],
   "options_ui": {
     "page": "options.html"
   },
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
-      "js": ["scripts/contentscript.js"],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "scripts/contentscript.js",
+        "scripts/vue.js"
+      ],
       "run_at": "document_end",
       "all_frames": false
     }

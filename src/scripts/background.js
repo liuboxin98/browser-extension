@@ -1,5 +1,7 @@
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+import './background/requestblock';
 
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "fromPopup") {
     sendResponse({
       action: "saved",
@@ -17,6 +19,4 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     sendResponse('bg ok!');
 
   }
-
-
 });

@@ -1,3 +1,18 @@
+var app = new Vue({
+  el: '#app',
+  data: {
+    message: 'Hello Vue!'
+  },
+  created() {
+    console.log('[ this.message ] >', this.message)
+  }
+})
+
+
+
+
+
+
 const btnSave = document.querySelector('#btnSave');
 const btnSaveFilter = document.querySelector('#btnSaveFilter');
 const switchFilter = document.querySelector('#switchFilter');
